@@ -162,33 +162,32 @@ const HomePage = () => {
             </section>
 
             {/* Services Grid */}
-            <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
-                <div className="text-center mb-10">
-                    <h2 className="text-3xl font-bold text-[#0F172A] mb-2">Our Services</h2>
-                    <p className="text-slate-500 text-sm sm:text-base">Everything you need for your health, all in one place</p>
+            <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+                <div className="text-center mb-8">
+                    <h2 className="text-2xl sm:text-3xl font-bold text-[#0F172A] mb-1">Our Services</h2>
+                    <p className="text-slate-500 text-xs sm:text-base">Everything you need for your health, all in one place</p>
                 </div>
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
                     {services.map((svc) => (
                         <div
                             key={svc.id}
                             onClick={() => navigate(svc.route)}
-                            className={`relative bg-gradient-to-br ${svc.color} border ${svc.borderColor} rounded-3xl p-6 cursor-pointer hover:shadow-lg hover:-translate-y-1 transition-all duration-200 group bg-white flex flex-col justify-between`}
+                            className={`relative bg-gradient-to-br ${svc.color} border ${svc.borderColor} rounded-2xl sm:rounded-3xl p-3.5 sm:p-6 cursor-pointer hover:shadow-lg transition-all bg-white flex flex-col justify-between`}
                         >
                             <div>
-                                <div className="flex items-start justify-between mb-4">
-                                    <div className="text-4xl">{svc.icon}</div>
-                                    <span className="text-[10px] font-bold text-[#0D9488] bg-[#0D9488]/10 border border-[#0D9488]/20 px-2.5 py-0.5 rounded-full whitespace-nowrap">
+                                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1.5 mb-3">
+                                    <div className="text-2xl sm:text-4xl">{svc.icon}</div>
+                                    <span className="text-[9px] sm:text-[10px] font-bold text-[#0D9488] bg-[#0D9488]/10 border border-[#0D9488]/20 px-2 py-0.5 rounded-full self-start sm:self-auto max-w-full truncate">
                                         {svc.badge}
                                     </span>
                                 </div>
-                                <h3 className="font-bold text-[#0F172A] text-base leading-snug mb-1">{svc.title}</h3>
-                                <p className="text-slate-500 text-xs leading-relaxed">{svc.desc}</p>
+                                <h3 className="font-bold text-[#0F172A] text-xs sm:text-base leading-snug mb-1">{svc.title}</h3>
+                                <p className="text-slate-500 text-[10px] sm:text-xs leading-relaxed">{svc.desc}</p>
                             </div>
                         </div>
                     ))}
                 </div>
             </section>
-
             {/* Sample Doctor Listings */}
             <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
                 <div className="flex items-center justify-between mb-6">

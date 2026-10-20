@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom'
 
 const AboutPage = () => {
     const navigate = useNavigate()
-    
+
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full">
             {/* Hero */}
@@ -44,7 +44,9 @@ const AboutPage = () => {
                         { num: '4.8★', label: 'Average Rating' },
                     ].map((stat, i) => (
                         <div key={i} className="p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm">
-                            <p className="text-3xl sm:text-4xl font-extrabold text-[#0D9488]">{stat.num}</p>
+                            <p className="text-xl sm:text-3xl md:text-4xl font-extrabold text-[#0D9488] break-words">
+                                {stat.num}
+                            </p>
                             <p className="text-slate-300 text-sm mt-2 font-medium">{stat.label}</p>
                         </div>
                     ))}

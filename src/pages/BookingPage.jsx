@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
 const BookingPage = () => {
@@ -6,6 +6,14 @@ const BookingPage = () => {
     const navigate = useNavigate()
     const [selected, setSelected] = useState('home')
     const [confirmed, setConfirmed] = useState(false)
+
+    // Check user authentication on page mount
+    useEffect(() => {
+        const user = localStorage.getItem('carepoint_user')
+        if (!user) {
+            navigate('/login')
+        }
+    }, [navigate])
 
     const [form, setForm] = useState({
         patientName: '',
@@ -15,14 +23,13 @@ const BookingPage = () => {
         reason: '',
         location: '',
     })
-useEffect(() => {
-        const user = localStorage.getItem('carepoint_user')
-        if (!user) {
-            navigate('/login') // Agar login nahi, toh login page par bhej do
-        }
-    }, [navigate])
+
     const handleConfirm = () => {
-        if (form.patientName && form.phone) setConfirmed(true)
+        if (form.patientName && form.phone) {
+            setConfirmed(true)
+        } else {
+            alert('Please enter Patient Name and Phone Number')
+        }
     }
 
     if (confirmed) {
@@ -31,11 +38,13 @@ useEffect(() => {
                 <div className="bg-white border border-slate-100 rounded-3xl shadow-lg p-12">
                     <div className="text-6xl mb-4">✅</div>
                     <h2 className="text-2xl font-bold text-[#0F172A] mb-2">Appointment Confirmed!</h2>
-                    <p className="text-slate-500 mb-2">Your {type || 'doctor'} appointment has been booked.</p>
-                    <p className="text-[#0D9488] font-semibold text-lg mb-6">Booking ID: CP-{Math.floor(100000 + Math.random() * 900000)}</p>
+                    <p className="text-slate-500 mb-2">Your {type || 'medical'} appointment has been booked.</p>
+                    <p className="text-[#0D9488] font-semibold text-lg mb-6">
+                        Booking ID: CP-{Math.floor(100000 + Math.random() * 900000)}
+                    </p>
                     <button
                         onClick={() => navigate('/')}
-                        className="bg-[#0D9488] hover:bg-[#0F766E] text-white font-bold px-8 py-3 rounded-xl transition-all w-full shadow-md"
+                        className="bg-[#0D9488] hover:bg-[#0F766E] text-white font-bold px-8 py-3 rounded-xl transition-all w-full shadow-md cursor-pointer"
                     >
                         Back to Home
                     </button>
@@ -72,22 +81,35 @@ useEffect(() => {
                     </p>
 
                     <div className="space-y-4">
-                        {[
-                            { label: 'Date & Time', type: 'date', key: 'date', placeholder: '' },
-                            { label: 'Reason for Visit', type: 'text', key: 'reason', placeholder: 'Brief description' },
-                            { label: 'Your Location', type: 'text', key: 'location', placeholder: 'Your address' },
-                        ].map((f) => (
-                            <div key={f.key}>
-                                <label className="text-xs font-semibold text-slate-500 block mb-1.5">{f.label}</label>
-                                <input
-                                    type={f.type}
-                                    placeholder={f.placeholder}
-                                    value={form[f.key]}
-                                    onChange={(e) => setForm({ ...form, [f.key]: e.target.value })}
-                                    className="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm bg-white focus:outline-none focus:border-[#0D9488] focus:ring-2 focus:ring-[#0D9488]/20 transition-all"
-                                />
-                            </div>
-                        ))}
+                        <div>
+                            <label className="text-xs font-semibold text-slate-500 block mb-1.5">Date &amp; Time</label>
+                            <input
+                                type="date"
+                                value={form.date}
+                                onChange={(e) => setForm({ ...form, date: e.target.value })}
+                                className="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm bg-white focus:outline-none focus:border-[#0D9488] transition-all"
+                            />
+                        </div>
+                        <div>
+                            <label className="text-xs font-semibold text-slate-500 block mb-1.5">Reason for Visit</label>
+                            <input
+                                type="text"
+                                placeholder="Brief description"
+                                value={form.reason}
+                                onChange={(e) => setForm({ ...form, reason: e.target.value })}
+                                className="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm bg-white focus:outline-none focus:border-[#0D9488] transition-all"
+                            />
+                        </div>
+                        <div>
+                            <label className="text-xs font-semibold text-slate-500 block mb-1.5">Your Location</label>
+                            <input
+                                type="text"
+                                placeholder="Your address"
+                                value={form.location}
+                                onChange={(e) => setForm({ ...form, location: e.target.value })}
+                                className="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm bg-white focus:outline-none focus:border-[#0D9488] transition-all"
+                            />
+                        </div>
                     </div>
                 </div>
 
@@ -107,40 +129,31 @@ useEffect(() => {
                         <h3 className="font-bold text-[#0F172A] text-base sm:text-lg leading-snug">SCHEDULE HOSPITAL OPD APPOINTMENT</h3>
                     </div>
                     <p className="text-slate-500 text-sm mb-6 leading-relaxed">
-                        Book a scheduled consultation session at partner clinics & hospitals.
+                        Book a scheduled consultation session at partner clinics &amp; hospitals.
                     </p>
 
                     <div className="space-y-4">
-                        {[
-                            { label: 'Select Doctor/Specialty', type: 'text', key: 'reason', placeholder: 'e.g. Cardiologist' },
-                            { label: 'Choose Hospital', type: 'text', key: 'location', placeholder: 'e.g. PIMS Islamabad' },
-                            { label: 'Select Date', type: 'date', key: 'date', placeholder: '' },
-                        ].map((f) => (
-                            <div key={f.key}>
-                                <label className="text-xs font-semibold text-slate-500 block mb-1.5">{f.label}</label>
-                                <input
-                                    type={f.type}
-                                    placeholder={f.placeholder}
-                                    className="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm bg-white focus:outline-none focus:border-[#0F172A] focus:ring-2 focus:ring-[#0F172A]/10 transition-all"
-                                />
-                            </div>
-                        ))}
-
-                        {/* Doctor slots */}
-                        <div className="bg-white border border-slate-100 rounded-xl p-4 shadow-sm">
-                            <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-full bg-[#0D9488]/20 flex items-center justify-center text-xl shrink-0">👨‍⚕️</div>
-                                <div>
-                                    <p className="text-sm font-bold text-[#0F172A]">Doctor GP/OPD</p>
-                                    <p className="text-xs text-slate-400 mt-0.5">Fee: PKR 300 · Ziauddin Clifton</p>
-                                </div>
-                            </div>
+                        <div>
+                            <label className="text-xs font-semibold text-slate-500 block mb-1.5">Select Doctor / Specialty</label>
+                            <input
+                                type="text"
+                                placeholder="e.g. Cardiologist"
+                                className="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm bg-white focus:outline-none focus:border-[#0F172A] transition-all"
+                            />
+                        </div>
+                        <div>
+                            <label className="text-xs font-semibold text-slate-500 block mb-1.5">Choose Hospital</label>
+                            <input
+                                type="text"
+                                placeholder="e.g. PIMS Islamabad"
+                                className="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm bg-white focus:outline-none focus:border-[#0F172A] transition-all"
+                            />
                         </div>
                     </div>
                 </div>
             </div>
 
-            {/* Patient Details */}
+            {/* Patient Details Input */}
             <div className="bg-white border border-slate-100 rounded-2xl shadow-sm p-6 sm:p-8 mt-8">
                 <h3 className="font-bold text-[#0F172A] text-lg mb-4">Patient Details</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -151,7 +164,7 @@ useEffect(() => {
                             placeholder="Patient full name"
                             value={form.patientName}
                             onChange={(e) => setForm({ ...form, patientName: e.target.value })}
-                            className="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#0D9488] focus:ring-2 focus:ring-[#0D9488]/20 transition-all"
+                            className="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#0D9488] transition-all"
                         />
                     </div>
                     <div>
@@ -161,25 +174,19 @@ useEffect(() => {
                             placeholder="+92 300 1234567"
                             value={form.phone}
                             onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                            className="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#0D9488] focus:ring-2 focus:ring-[#0D9488]/20 transition-all"
+                            className="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#0D9488] transition-all"
                         />
                     </div>
                 </div>
             </div>
 
-            {/* Confirm Buttons */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
+            {/* Confirm Button */}
+            <div className="mt-6">
                 <button
                     onClick={handleConfirm}
-                    className="bg-[#0D9488] hover:bg-[#0F766E] text-white font-bold py-4 px-6 rounded-2xl transition-all shadow-lg hover:shadow-[0_8px_20px_rgba(13,148,136,0.3)] text-sm flex items-center justify-center gap-2"
+                    className="w-full bg-[#0D9488] hover:bg-[#0F766E] text-white font-bold py-4 px-6 rounded-2xl transition-all shadow-lg text-sm flex items-center justify-center gap-2 cursor-pointer"
                 >
-                    ✅ CONFIRM HOME VISIT
-                </button>
-                <button
-                    onClick={handleConfirm}
-                    className="bg-[#0F172A] hover:bg-[#1E293B] text-white font-bold py-4 px-6 rounded-2xl transition-all shadow-lg hover:shadow-[0_8px_20px_rgba(15,23,42,0.3)] text-sm flex items-center justify-center gap-2"
-                >
-                    🏥 SCHEDULE HOSPITAL APPOINTMENT
+                    ✅ CONFIRM APPOINTMENT
                 </button>
             </div>
         </div>
