@@ -36,7 +36,7 @@ const Navbar = () => {
                 {/* Logo Section */}
                 <Link to="/" className="flex items-center gap-2.5 shrink-0">
                     <img 
-                        src="/public/carePoint.png" 
+                        src="./public/carePoint.png" 
                         alt="CarePoint Logo" 
                         onError={(e) => { e.target.onerror = null; e.target.src = 'src/assets/carePoint.png' }}
                         className="w-10 h-10 rounded-full object-cover border border-teal-100 shadow-sm"
