@@ -101,7 +101,7 @@ const HomePage = () => {
     const handleSearch = (e) => {
         e.preventDefault()
         const query = searchQuery.toLowerCase().trim()
-        
+
         if (query.includes('doctor') || query.includes('dr')) {
             navigate('/doctor')
         } else {
@@ -126,7 +126,7 @@ const HomePage = () => {
                     <div className="absolute top-10 left-10 w-64 h-64 rounded-full bg-[#0D9488] blur-3xl" />
                     <div className="absolute bottom-10 right-10 w-64 h-64 rounded-full bg-[#F43F5E] blur-3xl" />
                 </div>
-                
+
                 <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <div className="inline-flex items-center gap-2 bg-[#0D9488]/20 border border-[#0D9488]/40 text-[#14B8A6] px-4 py-1.5 rounded-full text-sm font-medium mb-6 shadow-sm">
                         📍 Pakistan — Serving Nationwide
@@ -191,7 +191,7 @@ const HomePage = () => {
             {/* Sample Doctor Listings */}
             <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
                 <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-2xl sm:text-3xl font-bold text-[#0F172A]">Sample Doctor Listings</h2>
+                    <h2 className="text-xl sm:text-3xl font-bold text-[#0F172A]">Nearby Doctors</h2>
                     <button
                         onClick={() => navigate('/doctor')}
                         className="text-[#0D9488] hover:text-[#0F766E] font-bold text-sm flex items-center gap-1 transition-colors"
