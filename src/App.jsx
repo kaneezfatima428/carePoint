@@ -15,7 +15,16 @@ import LoginPage from './pages/LoginPage'
 import NotFoundPage from './pages/NotFoundPage'
 import PatientDashboard from './pages/PatientDashboard'
 import DoctorDashboard from './pages/DoctorDashboard'
-
+import PhysiotherapistPage from './pages/PhysiotherapistPage'
+import PhysioCategoryPage from './pages/PhysioCategoryPage'
+import PhysioListPage from './pages/PhysioListPage'
+import PhysioBookingPage from './pages/PhysioBookingPage'
+import UltrasoundPage from './pages/UltrasoundPage'
+import UltrasoundHospitalsPage from './pages/UltrasoundHospitalsPage'
+import UltrasoundBookingPage from './pages/UltrasoundBookingPage'
+import DietitianPage from './pages/DietitianPage'
+import DietitianCategoryPage from './pages/DietitianCategoryPage'
+import DietitianBookingPage from './pages/DietitianBookingPage'
 // Routes ke andar:
 
 function App() {
@@ -32,6 +41,17 @@ function App() {
             <Route path="/dashboard" element={<PatientDashboard />} />
             <Route path="/doctor-dashboard" element={<DoctorDashboard />} />
             <Route path="/book/:type" element={<BookingPage />} />
+
+            <Route path="/physiotherapist" element={<PhysiotherapistPage />} />
+            <Route path="/physiotherapist/:category" element={<PhysioCategoryPage />} />
+            <Route path="/physiotherapist/:category/:gender" element={<PhysioListPage />} />
+            <Route path="/book/physiotherapy" element={<PhysioBookingPage />} />
+            <Route path="/dietitian" element={<DietitianPage />} />
+            <Route path="/dietitian/:goal" element={<DietitianCategoryPage />} />
+            <Route path="/dietitian/:goal/:mode" element={<DietitianBookingPage />} />
+            <Route path="/ultrasound" element={<UltrasoundPage />} />
+            <Route path="/ultrasound/:shift" element={<UltrasoundHospitalsPage />} />
+            <Route path="/book/ultrasound" element={<UltrasoundBookingPage />} />
             <Route path="/not-found" element={<NotFoundPage />} />
             <Route path="*" element={<NotFoundPage />} />
             {/* Doctor nested routes */}

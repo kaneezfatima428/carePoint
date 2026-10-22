@@ -8,12 +8,8 @@ const Footer = () => {
                     {/* Brand */}
                     <div className="col-span-1 md:col-span-2">
                         <div className="flex items-center gap-3 mb-4">
-                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#0D9488] to-[#0F172A] border border-[#0D9488]/40 flex items-center justify-center shadow-md">
-                                <svg viewBox="0 0 40 40" className="w-7 h-7" fill="none">
-                                    <circle cx="20" cy="20" r="18" stroke="#14B8A6" strokeWidth="2" />
-                                    <path d="M20 8 L22 18 L32 20 L22 22 L20 32 L18 22 L8 20 L18 18 Z" fill="#0D9488" />
-                                    <circle cx="20" cy="20" r="3" fill="#F43F5E" />
-                                </svg>
+                            <div className="w-10 h-10 rounded-full  flex items-center justify-center shadow-md">
+                                <img src="/carePoint.png" alt="" />
                             </div>
                             <span className="text-white font-bold text-xl tracking-tight">
                                 Care<span className="text-[#0D9488]">Point</span>
