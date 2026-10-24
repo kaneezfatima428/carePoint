@@ -57,7 +57,7 @@ const DietitianCategoryPage = () => {
                     </div>
 
                     <button
-                        onClick={() => navigate(`/dietitian/${goal}/online`)}
+                        onClick={() => navigate(`/dietitian/list/${goal}`, { state: { mode: 'online' } })} // ya 'clinic'
                         className="w-full bg-[#0D9488] hover:bg-[#0F766E] text-white font-bold py-3.5 px-6 rounded-2xl shadow-md transition-all text-xs sm:text-sm flex items-center justify-center gap-2 cursor-pointer"
                     >
                         Choose Online Plan →
@@ -83,7 +83,7 @@ const DietitianCategoryPage = () => {
                     </div>
 
                     <button
-                        onClick={() => navigate(`/dietitian/${goal}/clinic`)}
+                        onClick={() => navigate(`/dietitian/list/${goal}`, { state: { mode: 'clinic' } })}
                         className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 px-6 rounded-2xl shadow-md transition-all text-xs sm:text-sm flex items-center justify-center gap-2 cursor-pointer"
                     >
                         Choose Clinic Visit →

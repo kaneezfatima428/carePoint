@@ -2,19 +2,19 @@ import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
 const availableTests = [
-    { id: 'cbc', name: 'Complete Blood Count (CBC)', category: 'Blood Test', price: 850, fasting: 'Not Required', desc: 'Checks hemoglobin, white blood cells, and platelets.' },
+    { id: 'cbc', name: 'Complete Blood Count (CBC)', category: 'Blood Test', price: 850, fasting: '', desc: 'Checks hemoglobin, white blood cells, and platelets.' },
     { id: 'sugar_f', name: 'Blood Sugar (Fasting)', category: 'Sugar Test', price: 400, fasting: '8-10 Hours Fasting', desc: 'Morning fasting glucose measurement.' },
-    { id: 'sugar_r', name: 'Blood Sugar (Random)', category: 'Sugar Test', price: 350, fasting: 'Not Required', desc: 'Instant random blood glucose check.' },
-    { id: 'hba1c', name: 'HbA1c (3-Month Sugar Average)', category: 'Sugar Test', price: 1200, fasting: 'Not Required', desc: 'Long-term diabetes control tracking.' },
-    { id: 'lft', name: 'Liver Function Test (LFT)', category: 'Organ Test', price: 1600, fasting: 'Not Required', desc: 'Bilirubin, ALT, AST & liver enzyme levels.' },
-    { id: 'kft', name: 'Kidney Function Test (KFT)', category: 'Organ Test', price: 1500, fasting: 'Not Required', desc: 'Creatinine, Urea & kidney health.' },
+    { id: 'sugar_r', name: 'Blood Sugar (Random)', category: 'Sugar Test', price: 350, fasting: '', desc: 'Instant random blood glucose check.' },
+    { id: 'hba1c', name: 'HbA1c (3-Month Sugar Average)', category: 'Sugar Test', price: 1200, fasting: '', desc: 'Long-term diabetes control tracking.' },
+    { id: 'lft', name: 'Liver Function Test (LFT)', category: 'Organ Test', price: 1600, fasting: '', desc: 'Bilirubin, ALT, AST & liver enzyme levels.' },
+    { id: 'kft', name: 'Kidney Function Test (KFT)', category: 'Organ Test', price: 1500, fasting: '', desc: 'Creatinine, Urea & kidney health.' },
     { id: 'lipid', name: 'Lipid Profile (Cholesterol)', category: 'Organ Test', price: 1800, fasting: '10-12 Hours Fasting', desc: 'Cholesterol, HDL, LDL, & Triglycerides.' },
-    { id: 'thyroid', name: 'Thyroid Profile (T3, T4, TSH)', category: 'Hormone Test', price: 2200, fasting: 'Not Required', desc: 'Complete thyroid hormone evaluation.' },
-    { id: 'uric', name: 'Uric Acid Test', category: 'General Test', price: 600, fasting: 'Not Required', desc: 'Joint pain & gout screening.' },
+    { id: 'thyroid', name: 'Thyroid Profile (T3, T4, TSH)', category: 'Hormone Test', price: 2200, fasting: '', desc: 'Complete thyroid hormone evaluation.' },
+    { id: 'uric', name: 'Uric Acid Test', category: 'General Test', price: 600, fasting: '', desc: 'Joint pain & gout screening.' },
 ]
 
 const LabTestListPage = () => {
-    const { gender } = useParams() // 'male' ya 'female'
+    const { gender } = useParams()
     const navigate = useNavigate()
     const [selectedTestIds, setSelectedTestIds] = useState([])
 
@@ -56,12 +56,11 @@ const LabTestListPage = () => {
                         Select Required Lab Tests
                     </h1>
                     <p className="text-slate-500 text-xs sm:text-sm mt-1">
-                        Tick multiple tests to book them together in a single home visit[cite: 3]
+                        Tick multiple tests to book them together in a single home visit
                     </p>
                 </div>
             </div>
 
-            {/* Test Cards with Multi-select Checkboxes */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {availableTests.map((test) => {
                     const isChecked = selectedTestIds.includes(test.id)
@@ -75,12 +74,11 @@ const LabTestListPage = () => {
                                     : 'border-slate-100 bg-white hover:border-slate-200'
                             }`}
                         >
-                            {/* Checkbox */}
                             <div className="pt-1">
                                 <input
                                     type="checkbox"
                                     checked={isChecked}
-                                    onChange={() => {}} // handled by parent div onClick
+                                    onChange={() => {}}
                                     className="w-5 h-5 accent-[#0D9488] rounded cursor-pointer"
                                 />
                             </div>
@@ -91,21 +89,23 @@ const LabTestListPage = () => {
                                     <span className="text-[#0D9488] font-black text-sm shrink-0">PKR {test.price}</span>
                                 </div>
                                 <p className="text-slate-500 text-xs mb-2">{test.desc}</p>
-                                <span className="bg-slate-100 text-slate-500 text-[10px] font-semibold px-2 py-0.5 rounded-md">
-                                    ⚠️ {test.fasting}
-                                </span>
+                                
+                                {test.fasting && (
+                                    <span className="inline-block bg-amber-50 text-amber-700 border border-amber-200 text-[10px] font-semibold px-2 py-0.5 rounded-md">
+                                        ⚠️ {test.fasting}
+                                    </span>
+                                )}
                             </div>
                         </div>
                     )
                 })}
             </div>
 
-            {/* Sticky Bottom Bar when 1 or more tests are checked */}
             {selectedTestIds.length > 0 && (
                 <div className="fixed bottom-6 left-4 right-4 max-w-2xl mx-auto bg-[#0F172A] text-white p-4 rounded-2xl shadow-2xl flex items-center justify-between border border-slate-700 z-50">
                     <div>
                         <p className="text-xs text-slate-400 font-medium">
-                            {selectedTestIds.length} Test(s) Selected[cite: 3]
+                            {selectedTestIds.length} Test(s) Selected
                         </p>
                         <p className="text-lg font-black text-[#14B8A6]">PKR {totalPrice}</p>
                     </div>

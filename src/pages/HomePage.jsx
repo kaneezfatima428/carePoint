@@ -42,16 +42,7 @@ const services = [
     color: 'from-purple-500/10 to-purple-600/5',
     borderColor: 'border-purple-400/20',
 },
-    {
-        id: 'hospital',
-        icon: '🏥',
-        title: 'Hospital Appointment',
-        desc: 'OPD & specialist booking',
-        route: '/',
-        badge: 'Available Now',
-        color: 'from-orange-500/10 to-orange-600/5',
-        borderColor: 'border-orange-400/20',
-    },
+    
     {
         id: 'ultrasound',
         icon: '🔊',

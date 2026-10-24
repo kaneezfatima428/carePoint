@@ -25,6 +25,7 @@ import UltrasoundBookingPage from './pages/UltrasoundBookingPage'
 import DietitianPage from './pages/DietitianPage'
 import DietitianCategoryPage from './pages/DietitianCategoryPage'
 import DietitianBookingPage from './pages/DietitianBookingPage'
+import DietitianListPage from './pages/DietitianListPage'
 import LabTestPage from './pages/LabTestPage'
 import LabTestListPage from './pages/LabTestListPage'
 import LabBookingPage from './pages/LabBookingPage'
@@ -49,10 +50,13 @@ function App() {
             <Route path="/physiotherapist/:category" element={<PhysioCategoryPage />} />
             <Route path="/physiotherapist/:category/:gender" element={<PhysioListPage />} />
             <Route path="/book/physiotherapy" element={<PhysioBookingPage />} />
+            {/* Dietitian / Nutritionist Routes */}
+            {/* Dietitian / Nutritionist Module Routes */}
             <Route path="/dietitian" element={<DietitianPage />} />
-            <Route path="/dietitian/:goal" element={<DietitianCategoryPage />} />
-            <Route path="/dietitian/:goal/:mode" element={<DietitianBookingPage />} />
-            <Route path="/ultrasound" element={<UltrasoundPage />} />
+            <Route path="/dietitian/category/:goal" element={<DietitianCategoryPage />} />
+            <Route path="/dietitian/list/:goal" element={<DietitianListPage />} />
+<Route path="/dietitian/book/:expertId" element={<DietitianBookingPage />} />
+              <Route path="/ultrasound" element={<UltrasoundPage />} />
             <Route path="/ultrasound/:shift" element={<UltrasoundHospitalsPage />} />
             <Route path="/book/ultrasound" element={<UltrasoundBookingPage />} />
             <Route path="/lab-tests" element={<LabTestPage />} />

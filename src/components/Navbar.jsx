@@ -10,9 +10,9 @@ const Navbar = () => {
 
     // Check user session
     useEffect(() => {
-        const storedUser = localStorage.getItem('carepoint_user');
+         const storedUser = localStorage.getItem('carepoint_user');
         if (storedUser) {
-            setUser(JSON.parse(storedUser))
+           setUser(JSON.parse(storedUser))
         } else {
             setUser(null)
         }
