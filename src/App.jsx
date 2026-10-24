@@ -25,6 +25,9 @@ import UltrasoundBookingPage from './pages/UltrasoundBookingPage'
 import DietitianPage from './pages/DietitianPage'
 import DietitianCategoryPage from './pages/DietitianCategoryPage'
 import DietitianBookingPage from './pages/DietitianBookingPage'
+import LabTestPage from './pages/LabTestPage'
+import LabTestListPage from './pages/LabTestListPage'
+import LabBookingPage from './pages/LabBookingPage'
 // Routes ke andar:
 
 function App() {
@@ -52,6 +55,9 @@ function App() {
             <Route path="/ultrasound" element={<UltrasoundPage />} />
             <Route path="/ultrasound/:shift" element={<UltrasoundHospitalsPage />} />
             <Route path="/book/ultrasound" element={<UltrasoundBookingPage />} />
+            <Route path="/lab-tests" element={<LabTestPage />} />
+            <Route path="/lab-tests/:gender" element={<LabTestListPage />} />
+            <Route path="/book/lab-test" element={<LabBookingPage />} />
             <Route path="/not-found" element={<NotFoundPage />} />
             <Route path="*" element={<NotFoundPage />} />
             {/* Doctor nested routes */}

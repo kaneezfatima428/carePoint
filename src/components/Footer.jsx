@@ -8,7 +8,7 @@ const Footer = () => {
                     {/* Brand */}
                     <div className="col-span-1 md:col-span-2">
                         <div className="flex items-center gap-3 mb-4">
-                            <div className="w-10 h-10 rounded-full  flex items-center justify-center shadow-md">
+                            <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-md">
                                 <img src="/carePoint.png" alt="" />
                             </div>
                             <span className="text-white font-bold text-xl tracking-tight">
