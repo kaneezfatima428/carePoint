@@ -29,6 +29,8 @@ import DietitianListPage from './pages/DietitianListPage'
 import LabTestPage from './pages/LabTestPage'
 import LabTestListPage from './pages/LabTestListPage'
 import LabBookingPage from './pages/LabBookingPage'
+import PharmacyPage from './pages/PharmacyPage'
+import PharmacyFeaturePage from './pages/PharmacyFeaturePage'
 // Routes ke andar:
 
 function App() {
@@ -55,13 +57,15 @@ function App() {
             <Route path="/dietitian" element={<DietitianPage />} />
             <Route path="/dietitian/category/:goal" element={<DietitianCategoryPage />} />
             <Route path="/dietitian/list/:goal" element={<DietitianListPage />} />
-<Route path="/dietitian/book/:expertId" element={<DietitianBookingPage />} />
-              <Route path="/ultrasound" element={<UltrasoundPage />} />
+            <Route path="/dietitian/book/:expertId" element={<DietitianBookingPage />} />
+            <Route path="/ultrasound" element={<UltrasoundPage />} />
             <Route path="/ultrasound/:shift" element={<UltrasoundHospitalsPage />} />
             <Route path="/book/ultrasound" element={<UltrasoundBookingPage />} />
             <Route path="/lab-tests" element={<LabTestPage />} />
             <Route path="/lab-tests/:gender" element={<LabTestListPage />} />
             <Route path="/book/lab-test" element={<LabBookingPage />} />
+            <Route path="/pharmacy" element={<PharmacyPage />} />
+            <Route path="/pharmacy/:feature" element={<PharmacyFeaturePage />} />
             <Route path="/not-found" element={<NotFoundPage />} />
             <Route path="*" element={<NotFoundPage />} />
             {/* Doctor nested routes */}

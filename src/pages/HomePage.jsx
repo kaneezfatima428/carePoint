@@ -58,7 +58,7 @@ const services = [
         icon: '💊',
         title: 'Online Pharmacy',
         desc: 'Medicines delivered home',
-        route: '/',
+        route: '/pharmacy',
         badge: 'Available Now',
         color: 'from-rose-500/10 to-rose-600/5',
         borderColor: 'border-rose-400/20',
