@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 
 const featureDetails = {
@@ -19,28 +19,6 @@ const featureDetails = {
     },
 }
 
-const karachiAreas = [
-    { name: 'Bahadurabad', latitude: 24.882, longitude: 67.064 },
-    { name: 'Clifton', latitude: 24.813, longitude: 67.030 },
-    { name: 'DHA', latitude: 24.795, longitude: 67.065 },
-    { name: 'Federal B Area', latitude: 24.933, longitude: 67.065 },
-    { name: 'Gulistan-e-Jauhar', latitude: 24.921, longitude: 67.137 },
-    { name: 'Gulshan-e-Iqbal', latitude: 24.923, longitude: 67.090 },
-    { name: 'Korangi', latitude: 24.830, longitude: 67.130 },
-    { name: 'Landhi', latitude: 24.846, longitude: 67.200 },
-    { name: 'Liaquatabad', latitude: 24.905, longitude: 67.045 },
-    { name: 'Lyari', latitude: 24.874, longitude: 66.990 },
-    { name: 'Malir', latitude: 24.894, longitude: 67.198 },
-    { name: 'Nazimabad', latitude: 24.926, longitude: 67.035 },
-    { name: 'North Karachi', latitude: 24.991, longitude: 67.065 },
-    { name: 'North Nazimabad', latitude: 24.951, longitude: 67.045 },
-    { name: 'Orangi Town', latitude: 24.955, longitude: 66.995 },
-    { name: 'PECHS', latitude: 24.868, longitude: 67.060 },
-    { name: 'Saddar', latitude: 24.860, longitude: 67.010 },
-    { name: 'Shah Faisal Colony', latitude: 24.880, longitude: 67.170 },
-    { name: 'Tariq Road', latitude: 24.875, longitude: 67.055 },
-]
-
 const inventoryCatalog = [
     { name: 'Amlodipine 5 mg', basePrice: 180 },
     { name: 'Cetirizine 10 mg', basePrice: 95 },
@@ -52,32 +30,24 @@ const inventoryCatalog = [
     { name: 'Warfarin 5 mg (high-alert)', basePrice: 190, restricted: true },
 ]
 
-const pharmacyBranches = karachiAreas.flatMap((area, index) => {
-    const branchTypes = [
-        { type: 'Pharmacy', offset: 1 },
-        { type: 'Hospital pharmacy', offset: -1 },
-    ]
+const pharmacyBranches = Array.from({ length: 4 }, (_, index) => {
+    const branchNumber = index + 1
 
-    return branchTypes.map(({ type, offset }, branchIndex) => {
-        const branchSeed = index * branchTypes.length + branchIndex
-
-        return {
-        id: `${area.name.toLowerCase().replaceAll(' ', '-')}-${type.toLowerCase().replaceAll(' ', '-')}`,
-        name: `Sample ${type} · ${area.name}`,
-        area: area.name,
-        type,
-        latitude: area.latitude + offset * 0.006,
-        longitude: area.longitude + offset * 0.007,
+    return {
+        id: `pharmacy-${branchNumber}`,
+        name: `Pharmacy ${branchNumber}`,
+        city: 'Karachi',
+        latitude: 24.86 + index * 0.025,
+        longitude: 67.01 + index * 0.02,
         inventory: inventoryCatalog
-            .filter((_, medicineIndex) => (medicineIndex + branchSeed) % 5 !== 0 || medicineIndex === 2 || medicineIndex === 7)
+            .filter((_, medicineIndex) => (medicineIndex + branchNumber) % 4 !== 0 || medicineIndex === 2 || medicineIndex === 7)
             .map((medicine, medicineIndex) => ({
                 name: medicine.name,
-                price: medicine.basePrice + ((branchSeed + medicineIndex) % 4) * 5,
-                stock: medicine.restricted ? 1 + ((branchSeed + medicineIndex) % 4) : 4 + ((branchSeed * 7 + medicineIndex * 3) % 30),
+                price: medicine.basePrice + ((branchNumber + medicineIndex) % 4) * 5,
+                stock: medicine.restricted ? 1 + ((branchNumber + medicineIndex) % 4) : 4 + ((branchNumber * 7 + medicineIndex * 3) % 30),
                 restricted: medicine.restricted,
             })),
-        }
-    })
+    }
 })
 
 const distanceInKm = (start, end) => {
@@ -98,20 +68,15 @@ const PharmacyFeaturePage = () => {
     const [prescriptionFile, setPrescriptionFile] = useState(null)
     const [prescriptionStatus, setPrescriptionStatus] = useState('locked')
     const [fulfillment, setFulfillment] = useState('')
-    const [location, setLocation] = useState('')
+    const [location, setLocation] = useState('Karachi')
+    const [locationStatus, setLocationStatus] = useState('Detecting your location…')
     const [userCoordinates, setUserCoordinates] = useState(null)
-    const [areaSearch, setAreaSearch] = useState('')
     const [medicineSearch, setMedicineSearch] = useState('')
-    const [selectedArea, setSelectedArea] = useState('')
     const [selectedBranch, setSelectedBranch] = useState(null)
     const [shoppingList, setShoppingList] = useState([])
     const [inventoryNotice, setInventoryNotice] = useState('')
     const [inventoryFulfillment, setInventoryFulfillment] = useState(false)
-
-    const filteredAreas = useMemo(() => {
-        const query = areaSearch.trim().toLowerCase()
-        return karachiAreas.filter((area) => area.name.toLowerCase().includes(query))
-    }, [areaSearch])
+    const locationRequestStarted = useRef(false)
 
     const filteredInventory = useMemo(() => {
         const query = medicineSearch.trim().toLowerCase()
@@ -119,17 +84,16 @@ const PharmacyFeaturePage = () => {
     }, [medicineSearch, selectedBranch])
 
     const nearbyBranches = useMemo(() => {
-        if (userCoordinates) {
-            return pharmacyBranches
-                .map((branch) => ({ ...branch, distance: distanceInKm(userCoordinates, branch) }))
-                .sort((first, second) => first.distance - second.distance)
-                .filter((branch, index) => branch.distance <= 20 || index < 5)
-        }
-        if (selectedArea) return pharmacyBranches.filter((branch) => branch.area === selectedArea)
-        return []
-    }, [selectedArea, userCoordinates])
-
-    if (!featureDetails[feature]) return <Navigate to="/pharmacy" replace />
+        const query = location.trim().toLowerCase()
+        return pharmacyBranches
+            .filter((branch) => !query || branch.city.toLowerCase().includes(query) || branch.name.toLowerCase().includes(query))
+            .map((branch) => ({
+                ...branch,
+                distance: userCoordinates ? distanceInKm(userCoordinates, branch) : null,
+                matches: branch.inventory.filter((medicine) => !medicineSearch.trim() || medicine.name.toLowerCase().includes(medicineSearch.trim().toLowerCase())),
+            }))
+            .sort((first, second) => (first.distance ?? 0) - (second.distance ?? 0))
+    }, [location, medicineSearch, userCoordinates])
 
     const details = featureDetails[feature]
 
@@ -145,41 +109,31 @@ const PharmacyFeaturePage = () => {
         setInventoryNotice(`${medicine.name} added to your pickup list.`)
     }
 
-    const handleUseLocation = () => {
+    const handleUseLocation = useCallback(() => {
         if (!navigator.geolocation) {
-            setLocation('Location services are not available in this browser. Search for a Karachi area below.')
+            setLocationStatus('Location services are not available. Showing Karachi pharmacy samples.')
             return
         }
-        setLocation('Requesting your location…')
+        setLocationStatus('Requesting your location…')
         navigator.geolocation.getCurrentPosition(
             ({ coords }) => {
                 if (coords.latitude < 24.6 || coords.latitude > 25.5 || coords.longitude < 66.6 || coords.longitude > 67.5) {
                     setUserCoordinates(null)
-                    setLocation('Your current location appears to be outside Karachi. Search for a Karachi area to browse the demo branch list.')
+                    setLocation('Karachi')
+                    setLocationStatus('Your location is outside Karachi. Inventory remains restricted to Karachi pharmacy samples.')
                     return
                 }
-                setSelectedArea('')
                 setSelectedBranch(null)
                 setUserCoordinates({ latitude: coords.latitude, longitude: coords.longitude })
                 setShoppingList([])
                 setMedicineSearch('')
-                setLocation('Location received. Nearby demo branches are sorted by approximate distance.')
+                setLocation('Karachi')
+                setLocationStatus('Location detected in Karachi. Pharmacy samples are sorted by approximate distance.')
             },
-            () => setLocation('Location access was not granted. Search for a Karachi area below.'),
+            () => setLocationStatus('Location access was not granted. Showing Karachi pharmacy samples; you can search by pharmacy name.'),
             { timeout: 10000 },
         )
-    }
-
-    const handleSelectArea = (areaName) => {
-        setSelectedArea(areaName)
-        setSelectedBranch(null)
-        setUserCoordinates(null)
-        setMedicineSearch('')
-        setShoppingList([])
-        setInventoryNotice('')
-        setInventoryFulfillment(false)
-        setLocation('')
-    }
+    }, [])
 
     const handleSelectBranch = (branch) => {
         setSelectedBranch(branch)
@@ -188,6 +142,15 @@ const PharmacyFeaturePage = () => {
         setInventoryNotice('')
         setInventoryFulfillment(false)
     }
+
+    useEffect(() => {
+        if (feature === 'inventory' && !locationRequestStarted.current) {
+            locationRequestStarted.current = true
+            handleUseLocation()
+        }
+    }, [feature, handleUseLocation])
+
+    if (!details) return <Navigate to="/pharmacy" replace />
 
     return (
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12 w-full">
@@ -298,86 +261,48 @@ const PharmacyFeaturePage = () => {
             {feature === 'inventory' && (
                 <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-7 shadow-sm">
                     <div className="mb-5 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
-                        This prototype has no pharmacy partner feed. Branches, approximate map points, prices, stock, delivery, and pickup below are sample data and are not live or orderable.
+                        Showing Karachi pharmacy samples by default. This prototype has no live pharmacy feed; branch listings, prices, and stock are illustrative and orders are not connected.
                     </div>
-                    <div className="grid sm:grid-cols-[1fr_auto] gap-3 items-end">
+                    <div className="grid grid-cols-1 sm:grid-cols-[1.4fr_1fr] gap-3 items-end">
                         <label className="text-sm font-semibold text-slate-700">
-                            Enter or search a Karachi area
+                            Search medication
                             <input
                                 type="search"
-                                value={areaSearch}
-                                onChange={(event) => setAreaSearch(event.target.value)}
-                                placeholder="e.g. Gulshan-e-Iqbal"
+                                value={medicineSearch}
+                                onChange={(event) => setMedicineSearch(event.target.value)}
+                                placeholder="Medicine name..."
                                 className="mt-1 block w-full rounded-xl border border-slate-300 px-3 py-3 font-normal outline-none focus:border-[#0D9488] focus:ring-2 focus:ring-teal-100"
                             />
                         </label>
-                        <button type="button" onClick={handleUseLocation} className="rounded-xl border border-slate-300 px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50">
-                            Use my location
+                        <label className="text-sm font-semibold text-slate-700">
+                            Search location
+                            <input
+                                type="search"
+                                value={location}
+                                onChange={(event) => {
+                                    setLocation(event.target.value)
+                                    setSelectedBranch(null)
+                                    setUserCoordinates(null)
+                                }}
+                                placeholder="Karachi or pharmacy name..."
+                                className="mt-1 block w-full rounded-xl border border-slate-300 px-3 py-3 font-normal outline-none focus:border-[#0D9488] focus:ring-2 focus:ring-teal-100"
+                            />
+                        </label>
+                    </div>
+                    <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
+                        <p role="status" className="text-xs text-slate-500">{locationStatus}</p>
+                        <button type="button" onClick={handleUseLocation} className="rounded-lg border border-slate-300 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50">
+                            Detect my location
                         </button>
                     </div>
-                    {location && <p role="status" className="mt-2 text-xs text-slate-500">{location}</p>}
-                    <div className="mt-4 flex flex-wrap gap-2" aria-label="Karachi area suggestions">
-                        {filteredAreas.map((area) => (
-                            <button
-                                key={area.name}
-                                type="button"
-                                onClick={() => handleSelectArea(area.name)}
-                                aria-pressed={selectedArea === area.name}
-                                className={`rounded-full border px-3 py-1.5 text-xs font-semibold ${selectedArea === area.name ? 'border-teal-700 bg-teal-700 text-white' : 'border-slate-200 text-slate-700 hover:border-teal-500'}`}
-                            >
-                                {area.name}
-                            </button>
-                        ))}
-                        {filteredAreas.length === 0 && <p className="text-sm text-slate-500">No Karachi areas match this search.</p>}
-                    </div>
 
-                    {(selectedArea || userCoordinates) && (
-                        <div className="mt-6">
-                            <h2 className="text-lg font-bold text-[#0F172A]">
-                                {userCoordinates ? 'Nearby pharmacy and hospital branches' : `Branches in ${selectedArea}`}
-                            </h2>
-                            <p className="mt-1 text-sm text-slate-500">
-                                {userCoordinates
-                                    ? 'Sorted by approximate distance to your location. Approximate branch coordinates are demo data.'
-                                    : 'Select an example branch to preview that branch’s separate inventory.'}
-                            </p>
-                            <div className="mt-4 grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                                {nearbyBranches.map((branch) => (
-                                    <button
-                                        key={branch.id}
-                                        type="button"
-                                        onClick={() => handleSelectBranch(branch)}
-                                        aria-pressed={selectedBranch?.id === branch.id}
-                                        className={`rounded-xl border p-4 text-left transition-colors hover:border-[#0D9488] hover:bg-teal-50 ${selectedBranch?.id === branch.id ? 'border-[#0D9488] bg-teal-50' : 'border-slate-200'}`}
-                                    >
-                                        <span className="block font-bold text-[#0F172A]">{branch.name}</span>
-                                        <span className="mt-1 block text-xs text-slate-500">{branch.type} · {branch.area}</span>
-                                        {Number.isFinite(branch.distance) && <span className="mt-1 block text-xs font-semibold text-teal-800">~{branch.distance.toFixed(1)} km away</span>}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-                    )}
-
-                    {selectedBranch && (
+                    {selectedBranch ? (
                         <div className="mt-6 border-t border-slate-200 pt-6">
                             <button type="button" onClick={() => setSelectedBranch(null)} className="text-sm font-semibold text-[#0D9488] hover:underline">
-                                ← Back to branch list
+                                ← Back to pharmacy samples
                             </button>
-                            <h2 className="mt-3 text-lg font-bold text-[#0F172A]">{selectedBranch.name} inventory</h2>
-                            <p className="mt-1 text-sm text-slate-500">
-                                Sample branch-specific items for {selectedBranch.area}. Stock and prices are not live.
-                            </p>
-                            <label className="mt-4 block text-sm font-semibold text-slate-700">
-                                Search this branch’s inventory
-                                <input
-                                    type="search"
-                                    value={medicineSearch}
-                                    onChange={(event) => setMedicineSearch(event.target.value)}
-                                    placeholder="Type a medicine name..."
-                                    className="mt-1 block w-full sm:max-w-md rounded-xl border border-slate-300 px-3 py-3 font-normal outline-none focus:border-[#0D9488] focus:ring-2 focus:ring-teal-100"
-                                />
-                            </label>
+                            <h2 className="mt-3 text-lg font-bold text-[#0F172A]">{selectedBranch.name} · Karachi</h2>
+                            <p className="mt-1 text-sm text-slate-500">Branch-specific sample inventory. Stock and prices are not live.</p>
                             <div className="mt-4 overflow-x-auto rounded-xl border border-slate-200">
                                 <table className="w-full min-w-[620px] text-left text-sm">
                                     <thead className="bg-slate-50 text-xs uppercase text-slate-500">
@@ -391,7 +316,7 @@ const PharmacyFeaturePage = () => {
                                                     {medicine.restricted && <span className="ml-2 inline-block rounded-full bg-rose-100 px-2 py-0.5 text-[10px] font-bold text-rose-800">Restricted</span>}
                                                 </td>
                                                 <td className="px-4 py-3 text-slate-600">PKR {medicine.price}</td>
-                                                <td className="px-4 py-3 text-slate-600">{medicine.stock} (sample)</td>
+                                                <td className="px-4 py-3 text-slate-600">{medicine.stock}</td>
                                                 <td className="px-4 py-3">
                                                     {medicine.restricted ? (
                                                         <span className="text-xs font-semibold text-rose-700">In-person only · follow local regulations</span>
@@ -404,7 +329,7 @@ const PharmacyFeaturePage = () => {
                                                 </td>
                                             </tr>
                                         ))}
-                                        {filteredInventory.length === 0 && <tr><td colSpan="4" className="px-4 py-8 text-center text-slate-500">No medicines match this branch’s inventory.</td></tr>}
+                                        {filteredInventory.length === 0 && <tr><td colSpan="4" className="px-4 py-8 text-center text-slate-500">No medicines match this pharmacy’s inventory.</td></tr>}
                                     </tbody>
                                 </table>
                             </div>
@@ -419,6 +344,40 @@ const PharmacyFeaturePage = () => {
                                     {inventoryFulfillment && <p role="status" className="mt-1 text-teal-800">Home delivery selected for this preview only; ordering is not connected.</p>}
                                 </div>
                             )}
+                        </div>
+                    ) : (
+                        <div className="mt-6">
+                            <h2 className="text-lg font-bold text-[#0F172A]">Karachi pharmacies</h2>
+                            <p className="mt-1 text-sm text-slate-500">
+                                {userCoordinates ? 'Samples are sorted by approximate distance from your detected location.' : 'Enter a medicine and/or location to filter the pharmacy samples.'}
+                            </p>
+                            <div className="mt-4 grid sm:grid-cols-2 gap-4">
+                                {nearbyBranches.map((branch) => (
+                                    <button
+                                        key={branch.id}
+                                        type="button"
+                                        onClick={() => handleSelectBranch(branch)}
+                                        className="rounded-xl border border-slate-200 p-4 text-left transition-colors hover:border-[#0D9488] hover:bg-teal-50"
+                                    >
+                                        <span className="flex items-center justify-between gap-2">
+                                            <span className="font-bold text-[#0F172A]">{branch.name}</span>
+                                            {Number.isFinite(branch.distance) && <span className="text-xs font-semibold text-teal-800">~{branch.distance.toFixed(1)} km</span>}
+                                        </span>
+                                        <span className="mt-1 block text-xs text-slate-500">Karachi, Pakistan · {branch.matches.length} matching medicines</span>
+                                        <span className="mt-3 block space-y-1">
+                                            {branch.matches.slice(0, 3).map((medicine) => (
+                                                <span key={medicine.name} className="flex justify-between gap-2 text-xs text-slate-600">
+                                                    <span>{medicine.name}</span>
+                                                    <span className="shrink-0">PKR {medicine.price} · {medicine.stock} in stock</span>
+                                                </span>
+                                            ))}
+                                            {branch.matches.length > 3 && <span className="block text-xs font-semibold text-[#0D9488]">+ {branch.matches.length - 3} more matching medicines</span>}
+                                            {branch.matches.length === 0 && <span className="block text-xs text-slate-500">No matching medicines in this sample branch.</span>}
+                                        </span>
+                                    </button>
+                                ))}
+                                {nearbyBranches.length === 0 && <p className="col-span-full rounded-xl border border-slate-200 p-5 text-sm text-slate-500">No Karachi pharmacy samples match both searches.</p>}
+                            </div>
                         </div>
                     )}
                 </section>
