@@ -35,6 +35,12 @@ import NursePage from './pages/NursePage'
 import NurseGenderPage from './pages/NurseGenderPage'
 import NurseListPage from './pages/NurseListPage'
 import NurseBookingPage from './pages/NurseBookingPage'
+import NurseDashboard from './pages/NurseDashboard'
+import PhysiotherapistDashboard from './pages/PhysiotherapistDashboard'
+import DietitianDashboard from './pages/DietitianDashboard'
+import UltrasoundDashboard from './pages/UltrasoundDashboard'
+import LabTechnicianDashboard from './pages/LabTechnicianDashboard'
+import PharmacyManagerDashboard from './pages/PharmacyManagerDashboard'
 // Routes ke andar:
 
 function App() {
@@ -50,6 +56,12 @@ function App() {
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/dashboard" element={<PatientDashboard />} />
             <Route path="/doctor-dashboard" element={<DoctorDashboard />} />
+            <Route path="/nurse-dashboard" element={<NurseDashboard />} />
+            <Route path="/physiotherapist-dashboard" element={<PhysiotherapistDashboard />} />
+            <Route path="/dietitian-dashboard" element={<DietitianDashboard />} />
+            <Route path="/ultrasound-dashboard" element={<UltrasoundDashboard />} />
+            <Route path="/lab-technician-dashboard" element={<LabTechnicianDashboard />} />
+            <Route path="/pharmacy-manager-dashboard" element={<PharmacyManagerDashboard />} />
             <Route path="/book/:type" element={<BookingPage />} />
 
             <Route path="/physiotherapist" element={<PhysiotherapistPage />} />

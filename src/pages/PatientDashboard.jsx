@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { getDashboardPath, isDietitianAccount, isLabTechnicianAccount, isNurseAccount, isPharmacyManagerAccount, isPhysiotherapistAccount, isUltrasoundAccount } from '../utils/accountRoles'
 import { formatCNIC, validateCNIC } from '../utils/feeRules'
 import {
     showSuccessAlert,
@@ -197,8 +198,8 @@ const PatientDashboard = () => {
         const storedUser = localStorage.getItem('carepoint_user')
         if (storedUser) {
             const parsed = JSON.parse(storedUser)
-            if (parsed.role === 'doctor') {
-                navigate('/doctor-dashboard')
+            if (parsed.role === 'doctor' || isNurseAccount(parsed) || isPhysiotherapistAccount(parsed) || isDietitianAccount(parsed) || isUltrasoundAccount(parsed) || isLabTechnicianAccount(parsed) || isPharmacyManagerAccount(parsed)) {
+                navigate(getDashboardPath(parsed))
                 return
             }
             setUser(parsed)

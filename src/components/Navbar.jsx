@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
+import { getDashboardPath } from '../utils/accountRoles'
 
 const Navbar = () => {
     const navigate = useNavigate()
@@ -80,11 +81,7 @@ const Navbar = () => {
                                     <button
                                         onClick={() => {
                                             setDropdownOpen(false)
-                                            if (user.role === 'doctor') {
-                                                navigate('/doctor-dashboard')
-                                            } else {
-                                                navigate('/dashboard')
-                                            }
+                                            navigate(getDashboardPath(user))
                                         }}
                                         className="w-full text-left px-4 py-2.5 text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-colors flex items-center gap-2 cursor-pointer"
                                     >
@@ -114,11 +111,7 @@ const Navbar = () => {
                     {user && (
                         <button
                             onClick={() => {
-                                if (user.role === 'doctor') {
-                                    navigate('/doctor-dashboard')
-                                } else {
-                                    navigate('/dashboard')
-                                }
+                                navigate(getDashboardPath(user))
                             }}
                             className="w-9 h-9 rounded-full bg-[#0D9488] text-white font-bold flex items-center justify-center text-sm shadow-sm"
                         >
@@ -181,11 +174,7 @@ const Navbar = () => {
                                 <button
                                     onClick={() => {
                                         setMobileMenuOpen(false)
-                                        if (user.role === 'doctor') {
-                                            navigate('/doctor-dashboard')
-                                        } else {
-                                            navigate('/dashboard')
-                                        }
+                                        navigate(getDashboardPath(user))
                                     }}
                                     className="w-full text-left bg-teal-50 text-[#0D9488] font-bold py-2.5 px-4 rounded-xl text-xs flex items-center gap-2"
                                 >

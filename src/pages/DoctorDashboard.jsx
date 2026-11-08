@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { showSuccessAlert, showErrorAlert, showWarningAlert, showConfirmAlert } from '../utils/alert'
 import { SERVICE_CATEGORIES, calculateFeeBreakdown, formatCNIC, validateCNIC } from '../utils/feeRules'
+import { getDashboardPath, isDietitianAccount, isLabTechnicianAccount, isNurseAccount, isPharmacyManagerAccount, isPhysiotherapistAccount, isUltrasoundAccount } from '../utils/accountRoles'
 
 // ─── Sample Data ───────────────────────────────────────────────────────────────
 const SAMPLE_APPOINTMENTS = [
@@ -897,7 +898,10 @@ const DoctorDashboard = () => {
         const storedUser = localStorage.getItem('carepoint_user')
         if (storedUser) {
             const parsed = JSON.parse(storedUser)
-            if (parsed.role !== 'doctor') navigate('/dashboard')
+            if (parsed.role !== 'doctor' || isNurseAccount(parsed) || isPhysiotherapistAccount(parsed) || isDietitianAccount(parsed) || isUltrasoundAccount(parsed) || isLabTechnicianAccount(parsed) || isPharmacyManagerAccount(parsed)) {
+                navigate(getDashboardPath(parsed))
+                return
+            }
             setUser(parsed)
         } else {
             navigate('/login')

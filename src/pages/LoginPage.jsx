@@ -7,6 +7,7 @@ import {
     calculateFeeBreakdown
 } from '../utils/feeRules'
 import { showSuccessAlert, showErrorAlert } from '../utils/alert'
+import { getDashboardPath, isDietitianCategory, isLabTechnicianCategory, isNurseCategory, isPharmacyManagerCategory, isPhysiotherapistCategory, isUltrasoundCategory } from '../utils/accountRoles'
 
 const LoginPage = () => {
     const navigate = useNavigate()
@@ -113,27 +114,38 @@ const LoginPage = () => {
             }
         }
 
+        const accountRole = role !== 'doctor'
+            ? role
+            : isNurseCategory(formData.category)
+                ? 'nurse'
+                : isPhysiotherapistCategory(formData.category)
+                    ? 'physiotherapist'
+                        : isDietitianCategory(formData.category)
+                            ? 'dietitian'
+                            : isUltrasoundCategory(formData.category)
+                                ? 'ultrasound_specialist'
+                                : isLabTechnicianCategory(formData.category)
+                                    ? 'lab_technician'
+                                    : isPharmacyManagerCategory(formData.category)
+                                        ? 'pharmacy_manager'
+                                        : 'doctor'
+
         // Save user session in localStorage (Mock authentication)
         localStorage.setItem(
             'carepoint_user',
             JSON.stringify({
-                role,
+                role: accountRole,
                 ...formData,
-                feeBreakdown: role === 'doctor' ? breakdown : null
+                feeBreakdown: accountRole !== 'patient' ? breakdown : null
             })
         )
 
         showSuccessAlert(
             isLogin ? 'Welcome Back!' : 'Account Created!',
-            `Successfully signed in as ${role === 'patient' ? 'Patient' : 'Doctor/Provider'}.`
+            `Successfully signed in as ${accountRole === 'patient' ? 'Patient' : accountRole === 'nurse' ? 'Nurse' : accountRole === 'physiotherapist' ? 'Physiotherapist' : accountRole === 'dietitian' ? 'Dietitian / Nutritionist' : accountRole === 'ultrasound_specialist' ? 'Ultrasound & Diagnostic Specialist' : accountRole === 'lab_technician' ? 'Lab Technician' : accountRole === 'pharmacy_manager' ? 'Pharmacist / Store Manager' : 'Doctor/Provider'}.`
         )
 
-        // Redirect based on role
-        if (role === 'patient') {
-            navigate('/dashboard')
-        } else {
-            navigate('/doctor-dashboard')
-        }
+        navigate(getDashboardPath({ role: accountRole, category: formData.category }))
     }
 
     return (
@@ -170,7 +182,7 @@ const LoginPage = () => {
                                 : 'text-slate-500 hover:text-slate-700'
                         }`}
                     >
-                        👨‍⚕️ Doctor / Provider
+                        👨‍⚕️ Doctor / Nurse Provider
                     </button>
                 </div>
 
@@ -188,7 +200,7 @@ const LoginPage = () => {
                             type="text"
                             name="name"
                             required
-                            placeholder={role === 'patient' ? 'e.g. Ali Ahmed' : 'e.g. Dr. Sarah Khan'}
+                            placeholder={role === 'patient' ? 'e.g. Ali Ahmed' : isNurseCategory(formData.category) ? 'e.g. Nurse Aisha Malik' : isPhysiotherapistCategory(formData.category) ? 'e.g. Alex Morgan, PT' : isDietitianCategory(formData.category) ? 'e.g. Ayesha Khan, RD' : isUltrasoundCategory(formData.category) ? 'e.g. Sara Ahmed, RDMS' : isLabTechnicianCategory(formData.category) ? 'e.g. Adeel Khan, MLT' : isPharmacyManagerCategory(formData.category) ? 'e.g. Ayesha Khan, RPh' : 'e.g. Dr. Sarah Khan'}
                             value={formData.name}
                             onChange={handleChange}
                             className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[#0D9488] transition-all"
@@ -297,7 +309,7 @@ const LoginPage = () => {
                             <div>
                                 <div className="flex items-center justify-between mb-1">
                                     <label className="block text-xs font-bold text-slate-700">
-                                        Doctor CNIC Number *
+                                        Healthcare Provider CNIC Number *
                                     </label>
                                     <span className="text-[10px] text-slate-400">NADRA standard (13 digits)</span>
                                 </div>
@@ -359,7 +371,7 @@ const LoginPage = () => {
                                     <input
                                         type="text"
                                         name="specialty"
-                                        placeholder="e.g. MBBS, FCPS / GP"
+                                        placeholder={isNurseCategory(formData.category) ? 'e.g. BSN, RN / Critical Care' : isPhysiotherapistCategory(formData.category) ? 'e.g. DPT / Sports Rehabilitation' : isDietitianCategory(formData.category) ? 'e.g. RD / Clinical Nutrition' : isUltrasoundCategory(formData.category) ? 'e.g. RDMS / Sonography' : isLabTechnicianCategory(formData.category) ? 'e.g. MLT / Phlebotomy Certification' : isPharmacyManagerCategory(formData.category) ? 'e.g. Pharmacist license / Pharm-D' : 'e.g. MBBS, FCPS / GP'}
                                         value={formData.specialty}
                                         onChange={handleChange}
                                         className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[#0D9488]"
@@ -383,7 +395,7 @@ const LoginPage = () => {
                             <div className="bg-teal-50/50 border border-teal-100 rounded-2xl p-4 space-y-3">
                                 <div className="flex items-center justify-between">
                                     <label className="text-xs font-bold text-slate-700">
-                                        Base Consultation Fee (PKR) *
+                                        {isPharmacyManagerCategory(formData.category) ? 'Delivery Service Charge (PKR) *' : 'Base Consultation Fee (PKR) *'}
                                     </label>
                                     <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-teal-100/70 text-[#0D9488]">
                                         Platform Regulated Cap
@@ -412,7 +424,7 @@ const LoginPage = () => {
                                 </div>
 
                                 <p className="text-[11px] text-slate-500 leading-tight">
-                                    ℹ️ <strong>Rule:</strong> {bounds.note}
+                                    ℹ️ <strong>Rule:</strong> {isPharmacyManagerCategory(formData.category) ? `${bounds.note}. Medicine prices are set separately in the store catalog.` : bounds.note}
                                 </p>
 
                                 {/* Transparent Patient Checkout Breakdown Preview */}
@@ -445,7 +457,7 @@ const LoginPage = () => {
                         type="submit"
                         className="w-full bg-[#0D9488] hover:bg-[#0F766E] text-white font-bold py-3.5 rounded-xl text-sm transition-all shadow-md mt-4 cursor-pointer"
                     >
-                        {isLogin ? 'Login to CarePoint' : `Register as ${role === 'patient' ? 'Patient' : 'Doctor / Provider'}`}
+                        {isLogin ? 'Login to CarePoint' : `Register as ${role === 'patient' ? 'Patient' : isNurseCategory(formData.category) ? 'Nurse' : isPhysiotherapistCategory(formData.category) ? 'Physiotherapist' : isDietitianCategory(formData.category) ? 'Dietitian / Nutritionist' : isUltrasoundCategory(formData.category) ? 'Ultrasound Specialist' : isLabTechnicianCategory(formData.category) ? 'Lab Technician' : isPharmacyManagerCategory(formData.category) ? 'Pharmacist / Store Manager' : 'Doctor / Provider'}`}
                     </button>
                 </form>
 
