@@ -9,7 +9,7 @@ const NotFoundPage = () => {
                 <div className="text-6xl mb-4">🔍</div>
                 <h1 className="text-3xl font-extrabold text-[#0F172A] mb-2">404 Not Found</h1>
                 <p className="text-slate-500 text-sm mb-6">
-                    Aapki search ke mutabiq koi doctor ya service nahi mili. Barah-e-karam "Doctor" ya "Dr" search karein.
+                    We couldn’t find the page you’re looking for. Please check the address or return to the homepage.
                 </p>
                 <button
                     onClick={() => navigate('/')}

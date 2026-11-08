@@ -98,27 +98,20 @@ const StarRating = ({ rating }) => (
 const HomePage = () => {
     const navigate = useNavigate()
     const [searchQuery, setSearchQuery] = useState('')
+    const normalizedQuery = searchQuery.trim().toLowerCase()
+    const filteredDoctors = sampleDoctors.filter((doctor) => {
+        if (!normalizedQuery) return true
+
+        const searchableName = doctor.name.replace(/^(dr\.?|nurse)\s+/i, '').toLowerCase()
+        const searchableDetails = `${doctor.name} ${doctor.specialty} ${doctor.location}`.toLowerCase()
+
+        return searchableName.startsWith(normalizedQuery)
+            || (normalizedQuery.length > 1 && searchableDetails.includes(normalizedQuery))
+    })
 
     const handleSearch = (e) => {
         e.preventDefault()
-        const query = searchQuery.toLowerCase().trim()
-        if (query.includes('doctor') || query.includes('dr')) {
-            navigate('/doctor')
-        } else if (query.includes('nurse') || query.includes('nursing')) {
-            navigate('/nurse')
-        } else if (query.includes('physio') || query.includes('therapy')) {
-            navigate('/physiotherapist')
-        } else if (query.includes('diet') || query.includes('nutrition')) {
-            navigate('/dietitian')
-        } else if (query.includes('lab') || query.includes('test')) {
-            navigate('/lab-tests')
-        } else if (query.includes('pharmacy') || query.includes('medicine')) {
-            navigate('/pharmacy')
-        } else if (query.includes('ultra') || query.includes('scan')) {
-            navigate('/ultrasound')
-        } else {
-            navigate('/not-found')
-        }
+        document.getElementById('provider-results')?.scrollIntoView({ behavior: 'smooth' })
     }
 
     const handleBookingClick = () => {
@@ -156,7 +149,8 @@ const HomePage = () => {
                                 type="text"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                placeholder="Search Doctors, Physiotherapists, Ultrasounds..."
+                                aria-label="Search healthcare providers by name, specialty, or location"
+                                placeholder="Search providers by name, specialty, or location..."
                                 className="w-full text-slate-700 outline-none text-xs sm:text-sm py-1.5 bg-transparent"
                             />
                         </div>
@@ -196,9 +190,11 @@ const HomePage = () => {
             </section>
 
             {/* Doctors Near You Section */}
-            <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <section id="provider-results" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-xl sm:text-3xl font-bold text-[#0F172A]">Doctors Near You</h2>
+                    <h2 className="text-xl sm:text-3xl font-bold text-[#0F172A]">
+                        {normalizedQuery ? 'Matching Healthcare Providers' : 'Doctors Near You'}
+                    </h2>
                     <button
                         onClick={() => navigate('/doctor')}
                         className="text-[#0D9488] hover:text-[#0F766E] font-bold text-xs sm:text-sm flex items-center gap-1 cursor-pointer"
@@ -207,8 +203,8 @@ const HomePage = () => {
                     </button>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-                    {sampleDoctors.map((doc, i) => (
-                        <div key={i} className="bg-white rounded-2xl sm:rounded-3xl border border-slate-100 shadow-sm p-4 sm:p-6 flex flex-col justify-between">
+                    {filteredDoctors.map((doc) => (
+                        <div key={doc.name} className="bg-white rounded-2xl sm:rounded-3xl border border-slate-100 shadow-sm p-4 sm:p-6 flex flex-col justify-between">
                             <div className="flex items-start gap-3 mb-4">
                                 <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-teal-50 border border-teal-100 flex items-center justify-center shrink-0 text-2xl sm:text-3xl">
                                     {doc.gender === 'female' ? '👩‍⚕️' : '👨‍⚕️'}
@@ -234,6 +230,11 @@ const HomePage = () => {
                             </div>
                         </div>
                     ))}
+                    {filteredDoctors.length === 0 && (
+                        <p role="status" className="col-span-full rounded-2xl border border-slate-100 bg-white p-6 text-center text-sm text-slate-500">
+                            No providers match “{searchQuery.trim()}”. Try another name, specialty, or location.
+                        </p>
+                    )}
                 </div>
             </section>
         </div>
