@@ -31,6 +31,10 @@ import LabTestListPage from './pages/LabTestListPage'
 import LabBookingPage from './pages/LabBookingPage'
 import PharmacyPage from './pages/PharmacyPage'
 import PharmacyFeaturePage from './pages/PharmacyFeaturePage'
+import NursePage from './pages/NursePage'
+import NurseGenderPage from './pages/NurseGenderPage'
+import NurseListPage from './pages/NurseListPage'
+import NurseBookingPage from './pages/NurseBookingPage'
 // Routes ke andar:
 
 function App() {
@@ -66,6 +70,13 @@ function App() {
             <Route path="/book/lab-test" element={<LabBookingPage />} />
             <Route path="/pharmacy" element={<PharmacyPage />} />
             <Route path="/pharmacy/:feature" element={<PharmacyFeaturePage />} />
+
+            {/* Nurse Routes */}
+            <Route path="/nurse" element={<NursePage />} />
+            <Route path="/nurse/:category" element={<NurseGenderPage />} />
+            <Route path="/nurse/:category/:gender" element={<NurseListPage />} />
+            <Route path="/book/nurse" element={<NurseBookingPage />} />
+
             <Route path="/not-found" element={<NotFoundPage />} />
             <Route path="*" element={<NotFoundPage />} />
             {/* Doctor nested routes */}

@@ -30,10 +30,12 @@ const Footer = () => {
                         <h3 className="text-white font-semibold mb-4 text-base">Services</h3>
                         <ul className="space-y-2.5 text-slate-400 text-sm">
                             <li><Link to="/doctor" className="hover:text-[#0D9488] transition-colors">Doctors</Link></li>
-                            <li><Link to="/" className="hover:text-[#0D9488] transition-colors">Lab Tests</Link></li>
-                            <li><Link to="/" className="hover:text-[#0D9488] transition-colors">Ultrasound</Link></li>
+                            <li><Link to="/nurse" className="hover:text-[#0D9488] transition-colors">Nurse Care</Link></li>
+                            <li><Link to="/physiotherapist" className="hover:text-[#0D9488] transition-colors">Physiotherapy</Link></li>
+                            <li><Link to="/dietitian" className="hover:text-[#0D9488] transition-colors">Dietitian &amp; Nutrition</Link></li>
+                            <li><Link to="/lab-tests" className="hover:text-[#0D9488] transition-colors">Lab Tests</Link></li>
+                            <li><Link to="/ultrasound" className="hover:text-[#0D9488] transition-colors">Ultrasound</Link></li>
                             <li><Link to="/pharmacy" className="hover:text-[#0D9488] transition-colors">Online Pharmacy</Link></li>
-                            <li><Link to="/" className="hover:text-[#0D9488] transition-colors">Hospital Appointments</Link></li>
                         </ul>
                     </div>
 

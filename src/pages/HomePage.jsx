@@ -13,6 +13,16 @@ const services = [
         borderColor: 'border-[#0D9488]/20',
     },
     {
+        id: 'nurse',
+        icon: '💉',
+        title: 'Nurse Care',
+        desc: 'Home & Emergency Nurses',
+        route: '/nurse',
+        badge: 'Available Now',
+        color: 'from-emerald-500/10 to-teal-600/5',
+        borderColor: 'border-emerald-400/20',
+    },
+    {
         id: 'physio',
         icon: '🏃',
         title: 'Physiotherapist',
@@ -94,8 +104,16 @@ const HomePage = () => {
         const query = searchQuery.toLowerCase().trim()
         if (query.includes('doctor') || query.includes('dr')) {
             navigate('/doctor')
+        } else if (query.includes('nurse') || query.includes('nursing')) {
+            navigate('/nurse')
         } else if (query.includes('physio') || query.includes('therapy')) {
             navigate('/physiotherapist')
+        } else if (query.includes('diet') || query.includes('nutrition')) {
+            navigate('/dietitian')
+        } else if (query.includes('lab') || query.includes('test')) {
+            navigate('/lab-tests')
+        } else if (query.includes('pharmacy') || query.includes('medicine')) {
+            navigate('/pharmacy')
         } else if (query.includes('ultra') || query.includes('scan')) {
             navigate('/ultrasound')
         } else {

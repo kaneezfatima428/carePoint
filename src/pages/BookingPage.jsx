@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import { showWarningAlert } from '../utils/alert'
 
 const BookingPage = () => {
     const { type } = useParams()
@@ -28,7 +29,7 @@ const BookingPage = () => {
         if (form.patientName && form.phone) {
             setConfirmed(true)
         } else {
-            alert('Please enter Patient Name and Phone Number')
+            showWarningAlert('Missing Information', 'Please enter Patient Name and Phone Number to confirm appointment.')
         }
     }
 

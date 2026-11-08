@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
+import { showWarningAlert } from '../utils/alert'
 
 const PhysioBookingPage = () => {
     const navigate = useNavigate()
@@ -31,7 +32,7 @@ const PhysioBookingPage = () => {
         if (form.patientName && form.phone) {
             setConfirmed(true)
         } else {
-            alert('Please fill Patient Name & Phone Number')
+            showWarningAlert('Incomplete Details', 'Please fill Patient Name & Phone Number to proceed.')
         }
     }
 
